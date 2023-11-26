@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI implements ActionListener {
     File textFile;
-    LZW LZW = new LZW();
+    HuffmanFileCompression huffmanFileCompression = new HuffmanFileCompression();
     JPanel panel= new JPanel();
     JButton select = new JButton();
     JLabel textLabel = new JLabel();
@@ -67,7 +67,7 @@ public class GUI implements ActionListener {
         }
         else if (actionEvent.getActionCommand().equals("Compress")) {
             try{
-                LZW.compress(textFile);
+                HuffmanFileCompression.compressFile(textFile.getAbsolutePath(), "compressed.bin");
                 textLabel.setBounds(145, 50, 250, 60);
                 textLabel.setText("Compression completed");
             }
@@ -78,7 +78,7 @@ public class GUI implements ActionListener {
         }
         else if (actionEvent.getActionCommand().equals("Decompress")) {
             try{
-                LZW.decompress(textFile);
+                HuffmanFileCompression.decompressFile("compressed.bin", "decompressed.txt");
                 textLabel.setBounds(140, 50, 250, 60);
                 textLabel.setText("Decompression completed");
             }

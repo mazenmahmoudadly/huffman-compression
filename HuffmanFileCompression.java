@@ -24,9 +24,11 @@ public class HuffmanFileCompression {
     public static void main(String[] args) {
         String inputFile = "input.txt";
         String compressedFile = "compressed.bin";
+        String decompressedFile = "decompressed.txt";
         
 
         compressFile(inputFile, compressedFile);
+        decompressFile(compressedFile, decompressedFile);
         
     }
 
@@ -112,5 +114,46 @@ public class HuffmanFileCompression {
 
         return result;
     }
+
+    static void decompressFile(String compressedFile, String decompressedFile) {
+            try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(compressedFile));
+                 BufferedWriter writer = new BufferedWriter(new FileWriter(decompressedFile))) {
+
+                HuffmanNode root = (HuffmanNode) inputStream.readObject();
+                int compressedLength = inputStream.readInt();
+                byte[] compressedData = new byte[compressedLength];
+                inputStream.readFully(compressedData);
+
+                String decompressedData = decompress(compressedData, root);
+
+                writer.write(decompressedData);
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+    private static String decompress(byte[] compressedData, HuffmanNode root) {
+            StringBuilder decompressed = new StringBuilder();
+            HuffmanNode current = root;
+
+            for (byte b : compressedData) {
+                for (int i = 7; i >= 0; i--) {
+                    int bit = (b >> i) & 1;
+                    if (bit == 0) {
+                        current = current.left;
+                    } else {
+                        current = current.right;
+                    }
+
+                    if (current.left == null && current.right == null) {
+                        decompressed.append(current.data);
+                        current = root;
+                    }
+                }
+            }
+
+            return decompressed.toString();
+        }
 
 }
